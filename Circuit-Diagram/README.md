@@ -23,4 +23,3 @@
 
 ---
 
-Would you like me to create an **HTML version** (with visible grid borders) for use in a documentation webpage or README preview?
