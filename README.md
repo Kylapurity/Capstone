@@ -98,7 +98,7 @@ Output Layer (1 neuron)
 
 ```bash
 git clone <repository-url>
-cd "Project Capstone"
+cd "Capstone"
 ```
 
 ### Step 2: Create Virtual Environment
@@ -327,32 +327,3 @@ This project is licensed under the **MIT License** — see the `LICENSE` file fo
 * All contributors and testers
 
 ---
-
-## 📞 Support
-
-For help or suggestions:
-
-* Open an issue on GitHub
-* Check [API Docs](http://localhost:8000/docs)
-* Refer to the troubleshooting section
-
----
-
-## 🔮 Future Enhancements
-
-* [ ] Add authentication & API key management
-* [ ] Implement data persistence with database
-* [ ] Add historical prediction tracking
-* [ ] Build a web dashboard for visualization
-* [ ] A/B testing for model versions
-* [ ] Support more environmental factors
-* [ ] IoT sensor integration for real-time data
-* [ ] Alerts via email/SMS
-
----
-
-**Made with ❤️ for sustainable poultry farming**
-
----
-
-Would you like me to format this version into a **GitHub-optimized Markdown file** (with emoji styling, badges centered, and collapsible sections)?

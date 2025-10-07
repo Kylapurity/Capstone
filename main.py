@@ -33,15 +33,24 @@ last_load_error: Optional[str] = None
 
 # Resolve project root and model/scaler paths. Prefer env var but fall back to common filenames.
 BASE_DIR = Path(__file__).resolve().parent
+MODELS_DIR = BASE_DIR / "models"
 env_model_path = os.environ.get("MODEL_PATH")
 if env_model_path:
     MODEL_PATH = Path(env_model_path)
 else:
-    # Try common filenames in project root (prioritize the fixed compatible version)
-    possible = [BASE_DIR / "sequence_model_fixed.h5", BASE_DIR / "sequence_model.h5", BASE_DIR / "sequence_model.keras", BASE_DIR / "sequence_model"]
+    # Try common filenames in models directory (prioritize the fixed compatible version)
+    possible = [
+        MODELS_DIR / "sequence_model_fixed.h5", 
+        MODELS_DIR / "sequence_model_compatible.h5",
+        MODELS_DIR / "sequence_model.h5", 
+        MODELS_DIR / "sequence_model.keras", 
+        MODELS_DIR / "sequence_model",
+        BASE_DIR / "sequence_model_fixed.h5",  # Fallback to root
+        BASE_DIR / "sequence_model.h5"
+    ]
     MODEL_PATH = next((p for p in possible if p.exists()), possible[0])
 
-SCALER_X_PATH = Path(os.environ.get("SCALER_X_PATH", str(BASE_DIR / "scaler_X.pkl")))
+SCALER_X_PATH = Path(os.environ.get("SCALER_X_PATH", str(MODELS_DIR / "scaler_X.pkl")))
 
 # Initialize FastAPI app
 @asynccontextmanager
@@ -152,13 +161,23 @@ def load_model():
         else:
             model_candidates = [MODEL_PATH]
 
-        # If the candidate doesn't exist, check common alternatives in BASE_DIR
+        # If the candidate doesn't exist, check common alternatives in MODELS_DIR and BASE_DIR
         if not model_candidates[0].exists():
-            alt = [BASE_DIR / "sequence_model_fixed.h5", BASE_DIR / "sequence_model.h5", BASE_DIR / "sequence_model.keras", BASE_DIR / "sequence_model"]
+            alt = [
+                MODELS_DIR / "sequence_model_fixed.h5", 
+                MODELS_DIR / "sequence_model_compatible.h5",
+                MODELS_DIR / "sequence_model.h5", 
+                MODELS_DIR / "sequence_model.keras", 
+                MODELS_DIR / "sequence_model",
+                BASE_DIR / "sequence_model_fixed.h5", 
+                BASE_DIR / "sequence_model.h5", 
+                BASE_DIR / "sequence_model.keras", 
+                BASE_DIR / "sequence_model"
+            ]
             model_candidates = [p for p in alt if p.exists()]
 
         if not model_candidates:
-            raise FileNotFoundError(f"Model file not found. Checked: {BASE_DIR / 'sequence_model.h5'}, {BASE_DIR / 'sequence_model.keras'}; or set MODEL_PATH env var.")
+            raise FileNotFoundError(f"Model file not found. Checked: {MODELS_DIR / 'sequence_model.h5'}, {MODELS_DIR / 'sequence_model.keras'}, {BASE_DIR / 'sequence_model.h5'}; or set MODEL_PATH env var.")
 
         selected_model = model_candidates[0]
         logger.info(f"Attempting to load Keras model from: {selected_model}")
@@ -221,11 +240,10 @@ def load_model():
         # Load scaler for X (features only - target is not scaled)
         scaler_path = Path(SCALER_X_PATH)
         if not scaler_path.exists():
-            fallback = BASE_DIR / "scaler_X.pkl"
-            if fallback.exists():
-                scaler_path = fallback
-            else:
-                raise FileNotFoundError(f"Scaler X file '{SCALER_X_PATH}' not found. Checked fallback {fallback}.")
+            fallbacks = [MODELS_DIR / "scaler_X.pkl", BASE_DIR / "scaler_X.pkl"]
+            scaler_path = next((p for p in fallbacks if p.exists()), None)
+            if scaler_path is None:
+                raise FileNotFoundError(f"Scaler X file '{SCALER_X_PATH}' not found. Checked fallbacks: {fallbacks}")
 
         scaler_X = joblib.load(str(scaler_path))
         logger.info("✅ Scaler loaded successfully")
