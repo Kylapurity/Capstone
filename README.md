@@ -105,7 +105,7 @@ You can view the **system interface design** here:
 ### 🔹 Figma System Design
 <img width="500" height="840" alt="image" src="https://github.com/user-attachments/assets/0ea33847-085e-4931-b989-6177a0878326" />
 <img width="475" height="813" alt="image" src="https://github.com/user-attachments/assets/925a412d-dfd6-4538-bba9-cac485886b51" />
-<img width="327" height="483" alt="image" src="https://github.com/user-attachments/assets/9ee81b83-7798-4f4d-907d-6f64de83ab53" />
+<img width="542" height="822" alt="image" src="https://github.com/user-attachments/assets/6cfd4918-3e2e-4481-9eb6-2e9b68a1a642" />
 <img width="486" height="846" alt="image" src="https://github.com/user-attachments/assets/c58ae012-59f7-44a2-9aad-a643a808ded0" />
 
 
@@ -113,7 +113,6 @@ You can view the **system interface design** here:
 
 ## 🎥 Video Demonstration
 https://drive.google.com/drive/folders/1kOHgdyzWdpjWVaDbUydlGXtKXq6h9sAR?usp=drive_link
-
 ---
 
 ## 🚀 Installation
@@ -194,14 +193,6 @@ Project Capstone/
 └── .venv/
 ```
 
----
-
-## 🤝 Contributing
-
-Standard contribution and PEP 8 guidelines apply.
-
----
-
 ## 📄 License
 
 Licensed under the **MIT License** — see the `LICENSE` file for details.
@@ -222,4 +213,5 @@ Licensed under the **MIT License** — see the `LICENSE` file for details.
 * All contributors and testers
 
 ---
+
 
