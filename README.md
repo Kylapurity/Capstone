@@ -100,8 +100,8 @@ You can view the **system interface design** here:
 
 ### 🔹 Swagger API
 
-[![Model Comparison Screenshot](0916eadc-2847-4bed-b809-aaf1b4f49b9e.png)
-](http://127.0.0.1:8000/docs#/Prediction/predict_predict_post)
+https://capstone-trt6.onrender.com
+
 ### 🔹 Figma System Design
 <img width="500" height="840" alt="image" src="https://github.com/user-attachments/assets/0ea33847-085e-4931-b989-6177a0878326" />
 <img width="475" height="813" alt="image" src="https://github.com/user-attachments/assets/925a412d-dfd6-4538-bba9-cac485886b51" />
@@ -213,5 +213,6 @@ Licensed under the **MIT License** — see the `LICENSE` file for details.
 * All contributors and testers
 
 ---
+
 
 
