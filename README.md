@@ -98,7 +98,7 @@ You can view the **system interface design** here:
 
 ### 🔹 Swagger API
 
-https://capstone-trt6.onrender.com
+https://capstone-trt6.onrender.com/predict
 
 ### 🔹 Figma System Design
 
@@ -213,6 +213,7 @@ Licensed under the **MIT License** — see the `LICENSE` file for details.
 * All contributors and testers
 
 ---
+
 
 
 
