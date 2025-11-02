@@ -1,7 +1,7 @@
 # 🥚 Egg Production Prediction System
 
 **🥚Poultry Sight** is a **machine learning-powered FastAPI application** that predicts egg production based on environmental factors in poultry farms.
-This system uses a **deep learning model** trained on real farm data to help farmers **optimize production conditions** and improve yield.
+This system uses a **Traditional Model** trained on real farm data to help farmers **optimise production conditions** and improve egg production.
 
 ---
 
@@ -213,6 +213,7 @@ Licensed under the **MIT License** — see the `LICENSE` file for details.
 * All contributors and testers
 
 ---
+
 
 
 
