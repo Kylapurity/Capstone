@@ -21,9 +21,26 @@ import logging
 os.environ.setdefault("PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION", "python")
 from pathlib import Path
 
-# Configure logging
+# Configure logging FIRST
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Import TensorFlow/Keras early to ensure proper initialization
+keras = None
+tf = None
+
+# Try importing keras first (works with both standalone keras and tensorflow.keras)
+try:
+    import keras
+    logger.info("✅ Keras imported successfully")
+except ImportError as e:
+    logger.warning(f"⚠️  Failed to import standalone keras: {e}")
+    try:
+        import tensorflow as tf
+        from tensorflow import keras
+        logger.info("✅ Keras imported from TensorFlow")
+    except ImportError as e2:
+        logger.error(f"❌ Failed to import TensorFlow/Keras: {e2}")
 
 # Global variables for model and scalers
 model = None
@@ -38,15 +55,11 @@ env_model_path = os.environ.get("MODEL_PATH")
 if env_model_path:
     MODEL_PATH = Path(env_model_path)
 else:
-    # Try common filenames in models directory (prioritize the fixed compatible version)
+    # Try common filenames in models directory (prioritize newly trained .h5 model)
     possible = [
-        MODELS_DIR / "sequence_model_fixed.h5", 
-        MODELS_DIR / "sequence_model_compatible.h5",
-        MODELS_DIR / "sequence_model.h5", 
+        MODELS_DIR / "sequence_model.h5",
         MODELS_DIR / "sequence_model.keras", 
-        MODELS_DIR / "sequence_model",
-        BASE_DIR / "sequence_model_fixed.h5",  # Fallback to root
-        BASE_DIR / "sequence_model.h5"
+        MODELS_DIR / "sequence_model (1).keras",  # fallback to old file
     ]
     MODEL_PATH = next((p for p in possible if p.exists()), possible[0])
 
@@ -83,30 +96,34 @@ app.add_middleware(
 
 # Pydantic models for request/response validation
 class FarmInput(BaseModel):
-    """Input schema for egg production prediction - 5 features only"""
-    amount_of_chicken: float = Field(..., ge=100, le=10000, description="Number of chickens (100-10000)")
-    ammonia: float = Field(..., ge=0, le=100, description="Ammonia level in ppm")
-    temperature: float = Field(..., ge=-10, le=50, description="Temperature in Celsius")
-    humidity: float = Field(..., ge=0, le=100, description="Humidity percentage")
-    light_intensity: float = Field(..., ge=0, le=10000, description="Light intensity in lux")
+    """Input schema for egg production prediction - 7 features"""
+    amount_of_chicken: float = Field(..., ge=10, le=10000, description="Number of chickens (10-10000)")
+    amount_of_feeding: float = Field(..., ge=24.6, le=675.9, description="Amount of feeding (24.6-675.9)")
+    ammonia: float = Field(..., ge=2.0, le=53.5, description="Ammonia level in ppm (2.0-53.5)")
+    temperature: float = Field(..., ge=5.0, le=45.0, description="Temperature in Celsius (5.0-45.0)")
+    humidity: float = Field(..., ge=36.9, le=95.0, description="Humidity percentage (36.9-95.0)")
+    light_intensity: float = Field(..., ge=97.5, le=929.2, description="Light intensity in lux (97.5-929.2)")
+    noise: float = Field(..., ge=64.4, le=607.3, description="Noise level (64.4-607.3)")
 
     # Pydantic v2 configuration: use model_config
     model_config = {
         "json_schema_extra": {
             "example": {
-                "amount_of_chicken": 2728.0,
-                "ammonia": 14.4,
-                "temperature": 29.3,
-                "humidity": 51.7,
-                "light_intensity": 364.0
+                "amount_of_chicken": 2291.0,
+                "amount_of_feeding": 258.6,
+                "ammonia": 17.5,
+                "temperature": 27.0,
+                "humidity": 59.4,
+                "light_intensity": 481.8,
+                "noise": 236.3
             }
         }
     }
 
     @field_validator('humidity')
     def validate_humidity(cls, v):
-        if not 0 <= v <= 100:
-            raise ValueError('Humidity must be between 0 and 100')
+        if not 36.9 <= v <= 95.0:
+            raise ValueError('Humidity must be between 36.9 and 95.0')
         return v
 
 
@@ -181,14 +198,16 @@ def load_model():
 
         selected_model = model_candidates[0]
         logger.info(f"Attempting to load Keras model from: {selected_model}")
-        from tensorflow import keras
-        import tensorflow as tf
+        
+        if keras is None:
+            raise RuntimeError("TensorFlow/Keras not properly installed. Please install: pip install tensorflow>=2.16.0")
+        
         import h5py
 
         # Try several load strategies for compatibility
         load_errors = []
         
-        # Strategy 1: Standard load
+        # Strategy 1: Standard load with keras
         try:
             model = keras.models.load_model(str(selected_model), compile=False)
             logger.info("✅ Keras model loaded successfully (keras.models.load_model)")
@@ -196,46 +215,50 @@ def load_model():
             load_errors.append(f"Standard load: {str(e1)}")
             logger.warning(f"keras.models.load_model failed: {e1}")
             
-            # Strategy 2: Try with tf.keras
-            try:
-                model = tf.keras.models.load_model(str(selected_model), compile=False)
-                logger.info("✅ Keras model loaded successfully (tf.keras.models.load_model)")
-            except Exception as e2:
-                load_errors.append(f"TF Keras load: {str(e2)}")
-                logger.warning(f"tf.keras.models.load_model failed: {e2}")
-                
-                # Strategy 3: Manual reconstruction from H5 file (for batch_shape compatibility)
+            # Strategy 2: Try with tf.keras if tf is available
+            if tf is not None:
                 try:
-                    logger.info("Attempting manual model reconstruction from H5 file...")
-                    with h5py.File(str(selected_model), 'r') as f:
-                        # Load model config
-                        if 'model_config' in f.attrs:
-                            import json
-                            config = json.loads(f.attrs['model_config'])
-                            
-                            # Fix batch_shape -> input_shape in config
-                            if 'config' in config and 'layers' in config['config']:
-                                for layer in config['config']['layers']:
-                                    if 'config' in layer and 'batch_shape' in layer['config']:
-                                        batch_shape = layer['config']['batch_shape']
-                                        # Convert batch_shape to input_shape (remove batch dimension)
-                                        if batch_shape and len(batch_shape) > 1:
-                                            layer['config']['input_shape'] = batch_shape[1:]
-                                        del layer['config']['batch_shape']
-                            
-                            # Reconstruct model from modified config
-                            model = tf.keras.models.model_from_json(json.dumps(config))
-                            
-                            # Load weights
-                            model.load_weights(str(selected_model))
-                            logger.info("✅ Model reconstructed successfully with compatibility fixes")
-                        else:
-                            raise ValueError("No model_config found in H5 file")
-                            
-                except Exception as e3:
-                    load_errors.append(f"Manual reconstruction: {str(e3)}")
-                    logger.error("All attempts to load the Keras model failed")
-                    raise RuntimeError("; ".join(load_errors))
+                    model = tf.keras.models.load_model(str(selected_model), compile=False)
+                    logger.info("✅ Keras model loaded successfully (tf.keras.models.load_model)")
+                except Exception as e2:
+                    load_errors.append(f"TF Keras load: {str(e2)}")
+                    logger.warning(f"tf.keras.models.load_model failed: {e2}")
+                    
+                    # Strategy 3: Manual reconstruction from H5 file (for batch_shape compatibility)
+                    try:
+                        logger.info("Attempting manual model reconstruction from H5 file...")
+                        with h5py.File(str(selected_model), 'r') as f:
+                            # Load model config
+                            if 'model_config' in f.attrs:
+                                import json
+                                config = json.loads(f.attrs['model_config'])
+                                
+                                # Fix batch_shape -> input_shape in config
+                                if 'config' in config and 'layers' in config['config']:
+                                    for layer in config['config']['layers']:
+                                        if 'config' in layer and 'batch_shape' in layer['config']:
+                                            batch_shape = layer['config']['batch_shape']
+                                            # Convert batch_shape to input_shape (remove batch dimension)
+                                            if batch_shape and len(batch_shape) > 1:
+                                                layer['config']['input_shape'] = batch_shape[1:]
+                                            del layer['config']['batch_shape']
+                                
+                                # Reconstruct model from modified config
+                                model = tf.keras.models.model_from_json(json.dumps(config))
+                                
+                                # Load weights
+                                model.load_weights(str(selected_model))
+                                logger.info("✅ Model reconstructed successfully with compatibility fixes")
+                            else:
+                                raise ValueError("No model_config found in H5 file")
+                                
+                    except Exception as e3:
+                        load_errors.append(f"Manual reconstruction: {str(e3)}")
+                        logger.error("All attempts to load the Keras model failed")
+                        raise RuntimeError("; ".join(load_errors))
+            else:
+                logger.error("TensorFlow not available, skipping tf.keras strategies")
+                raise RuntimeError("; ".join(load_errors))
 
         # Load scaler for X (features only - target is not scaled)
         scaler_path = Path(SCALER_X_PATH)
@@ -251,7 +274,7 @@ def load_model():
         # Sanity test the model with a sample prediction (non-invasive)
         try:
             logger.info("Testing model with sample input...")
-            test_input = np.array([[2728.0, 14.4, 29.3, 51.7, 364.0]])
+            test_input = np.array([[2291.0, 258.6, 17.5, 27.0, 59.4, 481.8, 236.3]])
             test_scaled = scaler_X.transform(test_input)
             test_prediction = model.predict(test_scaled, verbose=0)
             test_output = float(np.ravel(test_prediction)[0])
@@ -326,6 +349,22 @@ def generate_recommendations(input_data: FarmInput, prediction: float) -> List[s
     else:
         recommendations.append("✅ Light intensity is optimal")
     
+    # Amount of feeding recommendations (Optimal: 200-300)
+    if input_data.amount_of_feeding < 150:
+        recommendations.append("🥗 Feeding amount is low. Increase to ensure adequate nutrition")
+    elif input_data.amount_of_feeding > 350:
+        recommendations.append("🥗 Feeding amount is high. Monitor to prevent overfeeding")
+    else:
+        recommendations.append("✅ Feeding amount is optimal")
+    
+    # Noise recommendations (Optimal: <200)
+    if input_data.noise > 300:
+        recommendations.append("🔊 Noise level is high. Reduce noise to minimize stress on chickens")
+    elif input_data.noise > 200:
+        recommendations.append("🔊 Noise level is elevated. Consider soundproofing measures")
+    else:
+        recommendations.append("✅ Noise level is optimal")
+    
     # Production prediction feedback
     expected_production = input_data.amount_of_chicken * 0.8  # ~80% production rate
     if prediction < expected_production * 0.7:
@@ -349,6 +388,10 @@ def calculate_confidence(input_data: FarmInput) -> float:
         score *= 0.8
     if input_data.light_intensity < 100 or input_data.light_intensity > 800:
         score *= 0.9
+    if input_data.amount_of_feeding < 100 or input_data.amount_of_feeding > 500:
+        score *= 0.85
+    if input_data.noise > 400:
+        score *= 0.85
     
     return round(score, 3)
 
@@ -363,11 +406,14 @@ async def root():
         "model": "Keras Neural Network (sequence_model.h5)",
         "features": [
             "amount_of_chicken",
+            "amount_of_feeding",
             "ammonia",
             "temperature",
             "humidity",
-            "light_intensity"
+            "light_intensity",
+            "noise"
         ],
+        "feature_count": 7,
         "docs": "/docs",
         "health": "/health",
         "endpoints": {
@@ -397,12 +443,15 @@ async def predict(farm_data: FarmInput):
     """
     Predict egg production for a single farm
     
-    **Required Parameters (5 features):**
-    - **amount_of_chicken**: Number of chickens (100-10000)
-    - **ammonia**: Ammonia level in ppm (0-100)
-    - **temperature**: Temperature in Celsius (-10 to 50)
-    - **humidity**: Humidity percentage (0-100)
-    - **light_intensity**: Light intensity in lux (0-10000)
+    **Required Parameters (7 features):**
+    - **amount_of_chicken**: Number of chickens (10-10000)
+    - **amount_of_feeding**: Amount of feeding (24.6-675.9)
+    - **ammonia**: Ammonia level in ppm (2.0-53.5)
+    - **temperature**: Temperature in Celsius (5.0-45.0)
+    - **humidity**: Humidity percentage (36.9-95.0)
+    - **light_intensity**: Light intensity in lux (97.5-929.2)
+    - **noise**: Noise level (64.4-607.3)
+    
     
     **Returns:**
     - Predicted egg production
@@ -419,10 +468,12 @@ async def predict(farm_data: FarmInput):
         # Prepare input data in correct order
         input_array = np.array([[
             farm_data.amount_of_chicken,
+            farm_data.amount_of_feeding,
             farm_data.ammonia,
             farm_data.temperature,
             farm_data.humidity,
-            farm_data.light_intensity
+            farm_data.light_intensity,
+            farm_data.noise
         ]])
         
         # Scale input
@@ -478,10 +529,12 @@ async def batch_predict(batch_data: BatchPredictionInput):
             # Prepare input data
             input_array = np.array([[
                 farm_data.amount_of_chicken,
+                farm_data.amount_of_feeding,
                 farm_data.ammonia,
                 farm_data.temperature,
                 farm_data.humidity,
-                farm_data.light_intensity
+                farm_data.light_intensity,
+                farm_data.noise
             ]])
             
             # Scale input
@@ -544,12 +597,14 @@ async def model_info():
         "version": "1.0.0",
         "features": [
             "amount_of_chicken",
+            "amount_of_feeding",
             "ammonia",
             "temperature",
             "humidity",
-            "light_intensity"
+            "light_intensity",
+            "noise"
         ],
-        "feature_count": 5,
+        "feature_count": 7,
         "target": "Total_egg_production",
         "input_shape": model.input_shape if hasattr(model, 'input_shape') else "Unknown",
         "output_shape": model.output_shape if hasattr(model, 'output_shape') else "Unknown",
@@ -558,7 +613,9 @@ async def model_info():
             "temperature": "18-28°C",
             "humidity": "50-70%",
             "ammonia": "<25 ppm",
-            "light_intensity": "200-500 lux"
+            "light_intensity": "200-500 lux",
+            "amount_of_feeding": "200-300",
+            "noise": "<200"
         }
     }
 

@@ -10,7 +10,7 @@ services:
       - key: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
       - key: MODEL_PATH
-        value: ./models/sequence_model_fixed.h5
+        value: ./models/sequence_model.h5
       - key: SCALER_X_PATH
         value: ./models/scaler_X.pkl
     healthCheckPath: /health
