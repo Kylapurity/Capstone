@@ -1,7 +1,7 @@
-# 🥚 Egg Production Prediction System
+# 🥚 Poultry Management System
 
-**🥚Poultry Sight** is a **machine learning-powered FastAPI application** that predicts egg production based on environmental factors in poultry farms.
-This system uses a **Traditional Model** trained on real farm data to help farmers **optimise production conditions** and improve egg production.
+**🥚Poultry Sight** is a **machine learning-powered application** that predicts egg production based on environmental factors in poultry farms.
+This system uses a **Traditional Model** trained on real farm data to help farmers **optimise egg production** and **analyze enviromental factors**.
 
 ---
 
@@ -10,7 +10,7 @@ This system uses a **Traditional Model** trained on real farm data to help farme
 * ⚡ **Real-time Predictions** — Get instant egg production forecasts based on environmental parameters.
 * 🧮 **Batch Processing** — Process multiple farm predictions simultaneously (up to 100 farms).
 * 💡 **Smart Recommendations** — Receive actionable insights to optimize poultry conditions.
-* 🌐 **RESTful API** — Seamlessly integrate with web or mobile apps.
+* 🌐 **Fast API** — Seamlessly integrates with our mobile app.
 * 🧭 **Interactive Documentation** — Swagger UI and ReDoc included for easy API exploration.
 * 🩺 **Health Monitoring** — System diagnostics and health checks.
 * 🔒 **CORS Enabled** — Ready for cross-origin requests from web applications.
@@ -182,7 +182,8 @@ Project Capstone/
 ├── requirements.txt
 ├── README.md
 ├── Egg_Production(1).csv
-├── Capstone_NoteBook_Updated.ipynb
+├── Notebook/
+    ├── Capstone_notebooke_Updated
 ├── models/
 │   ├── sequence_model_fixed.h5
 │   ├── sequence_model.h5
@@ -206,10 +207,6 @@ Licensed under the **MIT License** — see the `LICENSE` file for details.
 ---
 
 ## 🙏 Acknowledgments
-
-* TensorFlow team — Deep learning framework
-* FastAPI team — API framework
-* scikit-learn — Data preprocessing
 * All contributors and testers
 
 ---
