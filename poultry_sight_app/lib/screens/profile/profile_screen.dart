@@ -4,7 +4,6 @@ import 'package:poultry_app/services/user_profile_service.dart';
 import 'package:poultry_app/screens/dashboard/dashboard_screen.dart';
 import 'package:poultry_app/screens/graphs/graphs_screen.dart';
 import 'package:poultry_app/screens/history/history_screen.dart';
-import 'package:poultry_app/screens/chatbot/chatbot_screen.dart';
 import 'package:poultry_app/screens/profile/edit_profile_screen.dart';
 import 'package:poultry_app/screens/prediction/manual_prediction_screen.dart';
 import 'package:poultry_app/screens/profit/profit_screen.dart';
