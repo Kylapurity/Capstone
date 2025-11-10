@@ -47,7 +47,7 @@ This app represents a breakthrough in precision poultry farming, combining machi
 **Purpose**: Manage personal information and customize app behavior
 
 ### Navigation Tips
-- **Bottom Navigation Bar**: Quick access to main screens (Dashboard, Predict, Graphs, History, Profit, Chatbot)
+- **Bottom Navigation Bar**: Quick access to main screens (Dashboard, Predict, Graphs, History, Profit)
 - **Swipe Gestures**: Swipe left/right on dashboard for quick environmental monitoring
 - **Back Button**: Standard Android back navigation supported throughout the app
 - **Offline Mode**: All features work without internet connection except cloud synchronization
