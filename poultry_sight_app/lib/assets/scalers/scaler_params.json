@@ -1,0 +1,35 @@
+{
+  "input": {
+    "mean": [
+      20.47,
+      62.51,
+      17.37,
+      457.50,
+      981.53,
+      239.57,
+      175.28
+    ],
+    "scale": [
+      6.59,
+      9.89,
+      7.75,
+      140.76,
+      1575.64,
+      97.69,
+      91.01
+    ],
+    "feature_order": [
+      "Temperature",
+      "Humidity",
+      "Ammonia",
+      "Light_Intensity",
+      "Amount_of_chicken",
+      "Noise",
+      "Amount_of_Feeding"
+    ]
+  },
+  "output": {
+    "mean": [0.0],
+    "scale": [1.0]
+  }
+}
