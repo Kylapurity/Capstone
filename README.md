@@ -102,6 +102,7 @@ You can view the **system interface design** here:
 [https://capstone-trt6.onrender.com/predict](https://capstone-trt6.onrender.com/docs#/)
 
 ### 🖼️ Poultry App Screenshots
+
 <img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/983c26bb-5d4d-4a67-9795-839312ba11db" />  <img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/38c84267-3abc-42c2-ad95-79ffdf61af96" />
 <img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/d9cb6887-c171-4360-993e-679fbaa1439d" />  <img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/2b33645b-a730-49c4-ae2b-0ce5628572b6" />
 <img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/c72a41e4-02cc-4c1c-91d7-97ad3346b12a" />  <img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/f8a16e0a-2a52-4e79-b8a7-552be88471ca" />
@@ -212,6 +213,7 @@ Licensed under the **MIT License** — see the `LICENSE` file for details.
 ## 🙏 Acknowledgments
 * All contributors and testers
 ---
+
 
 
 
