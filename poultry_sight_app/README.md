@@ -41,11 +41,6 @@ This app represents a breakthrough in precision poultry farming, combining machi
 **Features**: Detailed profit/loss calculations, cost breakdowns, ROI analysis, and financial reports
 **Purpose**: Monitor financial performance and optimize farm profitability
 
-#### 🤖 Chatbot Screen
-**Navigation**: Tap "Chatbot" in bottom navigation bar or help icons throughout the app
-**Features**: AI-powered assistant for farming advice, troubleshooting, and app guidance
-**Purpose**: Get instant help and recommendations for poultry farming challenges
-
 #### 👤 Profile Screen
 **Navigation**: Tap profile icon in top-right corner of most screens
 **Features**: User account management, farm settings, data export options, and app preferences
