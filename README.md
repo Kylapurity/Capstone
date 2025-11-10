@@ -61,6 +61,8 @@ Output Layer (1 neuron)
 | **Temperature**       | Temperature (°C)               | -10–50°C   | 18–28°C       |
 | **Humidity**          | Relative humidity (%)          | 0–100%     | 50–70%        |
 | **Light Intensity**   | Light level (lux)              | 0–10,000   | 200–500 lux   |
+| **Noise**             | Sound level (dB)               | 0–120 dB   | Optimal <60 dB|
+| **Amount of Feeding** | Feed amount per session (grams) | 0–2000 g   | 900 g         |
 
 ---
 
@@ -90,6 +92,20 @@ Output Layer (1 neuron)
 
 ---
 
+## ⚙️ Component Testing Outputs
+
+| Test Case | Component         | Requirement                              | Expected Output                                         | Actual Result                                               | Test Result |
+| ---------- | ---------------- | ---------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------- | ------------ |
+| 1 | DHT22 Sensor | Measure temperature and humidity accurately | Readings within ±0.5°C / ±2% RH | Sensor provided consistent readings within specified tolerance | Passed |
+| 2 | MQ-135 Gas Sensor | Detect CO₂ levels in poultry environment | Analog values corresponding to 400–5000 ppm range | Output varied accurately with air quality changes | Passed |
+| 3 | MQ-137 Sensor | Measure ammonia concentration | Reliable detection of 10–300 ppm NH₃ | Sensor responded correctly to ammonia presence | Passed |
+| 4 | LDR Sensor | Monitor light intensity in poultry house | Analog values reflecting 0–1000 lux range | Readings matched external lux meter measurements | Passed |
+| 5 | ESP32 Wi-Fi Module | Establish stable internet connection | Successful connection and HTTP POST to cloud API | Device maintained stable connection and transmitted data | Passed |
+| 6 | Data Processing Logic | Format sensor data into JSON payload | Correctly structured JSON with all sensor values | API successfully parsed and stored all data fields | Passed |
+| 7 | Breadboard Circuit | Provide stable electrical connections | Consistent power and signal transmission | All sensors maintained stable connections without signal loss | Passed |
+| 8 | TensorFlow Lite Model | Generate offline predictions | Production forecasts without internet connection | Model provided predictions with 82% accuracy offline | Passed |
+
+---
 ## 🎨 Figma Design
 
 You can view the **system interface design** here:
@@ -104,13 +120,15 @@ You can view the **system interface design** here:
 
 #### 🖼️ Poultry App Screenshots
 
-<img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/983c26bb-5d4d-4a67-9795-839312ba11db" />  
-<img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/38c84267-3abc-42c2-ad95-79ffdf61af96" />
-<img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/d9cb6887-c171-4360-993e-679fbaa1439d" /> 
-<img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/2b33645b-a730-49c4-ae2b-0ce5628572b6" />
-<img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/c72a41e4-02cc-4c1c-91d7-97ad3346b12a" />  
-<img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/f8a16e0a-2a52-4e79-b8a7-552be88471ca" />
-<img width="1440" height="3120" alt="image" src="https://github.com/user-attachments/assets/be854ea2-0b7f-4a3c-b593-48ddbf27d8a0" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/983c26bb-5d4d-4a67-9795-839312ba11db" width="300" alt="Poultry App Screenshot 1"/>
+  <img src="https://github.com/user-attachments/assets/38c84267-3abc-42c2-ad95-79ffdf61af96" width="300" alt="Poultry App Screenshot 2"/>
+  <img src="https://github.com/user-attachments/assets/d9cb6887-c171-4360-993e-679fbaa1439d" width="300" alt="Poultry App Screenshot 3"/>
+  <img src="https://github.com/user-attachments/assets/2b33645b-a730-49c4-ae2b-0ce5628572b6" width="300" alt="Poultry App Screenshot 4"/>
+  <img src="https://github.com/user-attachments/assets/c72a41e4-02cc-4c1c-91d7-97ad3346b12a" width="300" alt="Poultry App Screenshot 5"/>
+  <img src="https://github.com/user-attachments/assets/f8a16e0a-2a52-4e79-b8a7-552be88471ca" width="300" alt="Poultry App Screenshot 6"/>
+  <img src="https://github.com/user-attachments/assets/be854ea2-0b7f-4a3c-b593-48ddbf27d8a0" width="300" alt="Poultry App Screenshot 7"/>
+</p>
 
 ---
 
@@ -214,6 +232,7 @@ Licensed under the **MIT License** — see the `LICENSE` file for details.
 ## 🙏 Acknowledgments
 * All contributors and testers
 ---
+
 
 
 
