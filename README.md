@@ -4,6 +4,9 @@
 This system uses a **Traditional Model** trained on real farm data to help farmers **optimise egg production** and **analyze enviromental factors**.
 
 ---
+## 🎥 Final Version video and APK File
+
+https://drive.google.com/drive/folders/19_aHnFVATZZzpTgOyjm5zBDBGoueEU_d?usp=sharing
 
 ## ✨ Features
 
