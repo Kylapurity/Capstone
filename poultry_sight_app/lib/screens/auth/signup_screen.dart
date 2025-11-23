@@ -1,6 +1,7 @@
 import 'package:poultry_app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:poultry_app/screens/auth/login_screen.dart';
+import 'package:poultry_app/screens/terms/terms_and_conditions_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -17,6 +18,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _chickenCountController = TextEditingController();
   bool _hidePassword = true;
   bool _isLoading = false;
+  bool _acceptedTerms = false;
 
   final authService = AuthService();
 
@@ -32,6 +34,17 @@ class _SignupScreenState extends State<SignupScreen> {
   Future<void> _handleSignup() async {
     // First validate the form
     if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    // Check if terms are accepted
+    if (!_acceptedTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please accept the Terms and Conditions to continue'),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
 
@@ -434,6 +447,74 @@ class _SignupScreenState extends State<SignupScreen> {
                                   }
                                   return null;
                                 },
+                              ),
+
+                              SizedBox(height: spacing),
+
+                              // Terms and Conditions checkbox
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Checkbox(
+                                    value: _acceptedTerms,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _acceptedTerms = value ?? false;
+                                      });
+                                    },
+                                    activeColor: Colors.green,
+                                  ),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _acceptedTerms = !_acceptedTerms;
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 12),
+                                        child: RichText(
+                                          text: TextSpan(
+                                            style: const TextStyle(
+                                              fontFamily: 'Urbanist',
+                                              fontSize: 12,
+                                              color: Colors.black,
+                                            ),
+                                            children: [
+                                              const TextSpan(
+                                                text: 'I agree to the ',
+                                              ),
+                                              WidgetSpan(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const TermsAndConditionsScreen(),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: const Text(
+                                                    'Terms and Conditions',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Urbanist',
+                                                      fontSize: 12,
+                                                      color: Colors.green,
+                                                      fontWeight: FontWeight.bold,
+                                                      decoration:
+                                                          TextDecoration.underline,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
 
                               SizedBox(height: spacing * 1.5),
