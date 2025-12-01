@@ -24,7 +24,7 @@ https://drive.google.com/drive/folders/19_aHnFVATZZzpTgOyjm5zBDBGoueEU_d?usp=sha
 
 The system includes three main components:
 
-1. **Deep Learning Model** — Sequential neural network trained on historical egg production data.
+1. **Traditional algorithm** — Multilayer Perceptron (MLP) model trained on historical egg production data.
 2. **FastAPI Backend** — RESTful API server for predictions and recommendations.
 3. **Data Processing Pipeline** — Uses `StandardScaler` for input normalization.
 
@@ -74,7 +74,7 @@ Output Layer (1 neuron)
 |         SVM        |   58246.8922   |   101518.1984  |    0.7690    |    0.6944   |    74.8217    |    92.1558   |
 |    Decision Tree   |   25986.2391   |   49358.5858   |    0.8970    |    0.8514   |    58.4187    |    82.2943   |
 |    Random Forest   |   14106.5453   |   28853.3894   |    0.9441    |    0.9131   |    43.1793    |    61.1087   |
-| **multilayer Perceptron (MLP)** | **25457.4023** | **25202.7207** |  **0.8991**  |  **0.9241** |  **70.7075**  |  **67.8767** |
+| **Multilayer Perceptron (MLP)** | **25457.4023** | **25202.7207** |  **0.8991**  |  **0.9241** |  **70.7075**  |  **67.8767** |
 
 🏆 **Best Model:** Sequence Model
 
@@ -190,7 +190,7 @@ Start the FastAPI server and make predictions using Python, JavaScript, or cURL 
 
 * **Dataset:** Egg_Production(1).csv
 * **Framework:** TensorFlow/Keras 2.15.0
-* **Model Type:** Sequential Deep Neural Network
+* **Model Type:** Multilayer Perceptron (MLP)
 * **Loss Function:** MSE
 * **Optimizer:** Adam
 * **Regularization:** Dropout (0.5)
@@ -232,6 +232,7 @@ Licensed under the **MIT License** — see the `LICENSE` file for details.
 ## 🙏 Acknowledgments
 * All contributors and testers
 ---
+
 
 
 
