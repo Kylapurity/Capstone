@@ -74,7 +74,7 @@ Output Layer (1 neuron)
 |         SVM        |   58246.8922   |   101518.1984  |    0.7690    |    0.6944   |    74.8217    |    92.1558   |
 |    Decision Tree   |   25986.2391   |   49358.5858   |    0.8970    |    0.8514   |    58.4187    |    82.2943   |
 |    Random Forest   |   14106.5453   |   28853.3894   |    0.9441    |    0.9131   |    43.1793    |    61.1087   |
-| **Sequence Model** | **25457.4023** | **25202.7207** |  **0.8991**  |  **0.9241** |  **70.7075**  |  **67.8767** |
+| **multilayer Perceptron (MLP)** | **25457.4023** | **25202.7207** |  **0.8991**  |  **0.9241** |  **70.7075**  |  **67.8767** |
 
 🏆 **Best Model:** Sequence Model
 
@@ -84,7 +84,7 @@ Output Layer (1 neuron)
 
 📊 **Model Ranking (by Test R²):**
 
-1. Sequence Model — R² = 0.9241
+1. Multilayer Perceptron (MLP) model — R² = 0.9241
 2. Random Forest — R² = 0.9131
 3. XGBoost — R² = 0.8554
 4. Decision Tree — R² = 0.8514
@@ -232,6 +232,7 @@ Licensed under the **MIT License** — see the `LICENSE` file for details.
 ## 🙏 Acknowledgments
 * All contributors and testers
 ---
+
 
 
 
